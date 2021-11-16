@@ -1,11 +1,14 @@
 {
   "name": "functions",
   "description": "Cloud Functions for Firebase",
+  "type": "module",
   "scripts": {
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "prebuild": "node node_modules/rimraf/bin functions",
+    "deploy": "irebase deploy --only functions",
+    "build": "babel app --out-dir functions --copy-files --ignore /node_modules",
     "logs": "firebase functions:log"
   },
   "engines": {
@@ -13,11 +16,20 @@
   },
   "main": "index.js",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "firebase-admin": "^9.8.0",
     "firebase-functions": "^3.14.1"
   },
   "devDependencies": {
-    "firebase-functions-test": "^0.2.0"
+    "@babel/core": "^7.16.0",
+    "@babel/node": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "firebase-functions-test": "^0.2.0",
+    "nodemon": "^2.0.15",
+    "rimraf": "^3.0.2"
   },
   "private": true
 }
