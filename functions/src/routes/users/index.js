@@ -6,7 +6,7 @@ import verifyTokenMiddleware from '../../middlewares/verifytoken.js'
 
 const router = express.Router()
 
-router.get('/', usersService.getUsers);
+router.get('/', verifyTokenMiddleware, usersService.getUsers);
 router.get('/signin',authService.createFirebaseToken);
 
 router.patch('/nickname',verifyTokenMiddleware, usersService.setNicknameAndIsNickNameSettingDoneTrue)
