@@ -7,7 +7,6 @@ const { CODE, MSG } = constants
 export default {
     getPosts: async (req, res) => {
       const snapshot = await db.collection('posts').get();
-    
       const posts = [];
       snapshot.forEach((doc) => {
         const id = doc.id;
@@ -15,7 +14,7 @@ export default {
         posts.push({id, ...data});
       });
     
-      res.status(200).send(JSON.stringify(posts));
+      return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_READ_POST,posts)
     },
   getPostByUid: async (req,res) => {
     const {post_uid} = req.params
@@ -57,7 +56,5 @@ export default {
           console.log(error)
           return resUtil.fail(req,res,CODE.BAD_REQUEST,MSG.FAIL_CREATE_POST)
         })
-
-      //await db.collection('posts').add(post);
     }
 }

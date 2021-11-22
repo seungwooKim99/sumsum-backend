@@ -55,15 +55,8 @@ export default {
       })
       .then((response) => {
         const body = response.data
-        //
-
         console.log('Got Response from kakao user check API.')
         const userId = `kakao:${body.id}`
-        //const userId = body.id
-        if (!userId) {
-          return res.status(404)
-          .send({message: 'There was no user with the given access token.'})
-        }
         let nickname = null
         let profileImage = null
         if (body.properties) {
@@ -97,36 +90,22 @@ export default {
               .then((response)=>{
                 console.log(`creating a custom firebase token based on uid ${userId}`)
                 const token = generateToken(userId)
-                res.status(200).send(token)
-                //admin.auth().createCustomToken(userId)
-                //  .then((customToken) => {
-                //    console.log(customToken)
-                //    res.status(200).send(customToken);
-                //  })
-                //  .catch((error) => {
-                //    console.log(error)
-                //  })
+                return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_CREATE_TOKEN, {token})
               })
               .catch((error) => {
                 console.log(error)
+                return resUtil.fail(req,res,CODE.BAD_REQUEST,MSG.FAIL_CREATE_USER,error.message)
               })
           } else {
             console.log('Document already exists (login)')
             const token = generateToken(userId)
-            res.status(200).send(token)
-            //admin.auth().createCustomToken(userId)
-            //      .then((customToken) => {
-            //        console.log(customToken)
-            //        res.status(200).send(customToken);
-            //      })
-            //      .catch((error) => {
-            //        console.log(error)
-            //      })
+            return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_CREATE_TOKEN, {token})
           }
         })
       })
       .catch((error) => {
         console.log(error.message)
+        return resUtil.fail(req,res,CODE.BAD_REQUEST, MSG.FAIL_READ_KAKAO_USER_INFO, error.message)
       })
     },
     setIsPhoneAuthDoneTrue: (req,res) => {

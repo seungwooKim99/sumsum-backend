@@ -42,7 +42,6 @@ export default {
 
     // POST Auth
     SUCCESS_CREATE_POST: 'POST 생성에 성공하였습니다',
-    SUCCESS_CONFIRM_SECRET: 'POST Secret Code 인증에 성공하였습니다',
     FAIL_CREATE_POST: 'POST 생성에 실패하였습니다',
     EXIST_POST: '이미 존재하는 POST입니다',
     NOT_EXIST_POST: '존재하는 POST가 아닙니다',
@@ -54,13 +53,11 @@ export default {
     SUCCESS_LOGIN: '로그인에 성공하였습니다',
     FAIL_LOGIN: '로그인에 실패하였습니다',
     SUCCESS_READ_POST: 'POST 조회에 성공하였습니다',
-    SUCCESS_CREATE_INBODY: 'Inbody 생성에 성공하였습니다',
-    SUCCESS_UPDATE_INBODY: 'Inbody 수정에 성공하였습니다',
-    SUCCESS_DELETE_INBODY: 'Inbody 삭제에 성공하였습니다',
-    FAIL_CREATE_INBODY: 'Inbody 생성에 실패하였습니다',
     FAIL_READ_POST: 'POST 조회에 실패하였습니다',
-    FAIL_UPDATE_INBODY: 'Inbody 수정에 실패하였습니다',
-    FAIL_DELETE_INBODY: 'Inbody 삭제에 실패하였습니다',
+    SUCCESS_UPDATE_POST: 'POST 수정에 성공하였습니다',
+    FAIL_UPDATE_POST: 'POST 수정에 실패하였습니다',
+    SUCCESS_DELETE_POST: 'POST 조회에 성공하였습니다',
+    FAIL_DELETE_POST: 'POST 삭제에 실패하였습니다',
 
     // Messenger
     SUCCESS_CREATE_CHATROOM: '채팅방 생성에 성공하였습니다.',
@@ -72,30 +69,9 @@ export default {
     SUCCESS_SEND_MESSAGE: '메시지 전송에 성공하였습니다.',
     FAIL_SEND_MESSAGE: '메시지 전송에 실패하였습니다.',
 
-    // Lesson, Session, Set
-    SUCCESS_READ_LESSON: 'Lesson 조회에 성공하였습니다',
-    SUCCESS_CREATE_LESSON: 'Lesson 생성에 성공하였습니다',
-    SUCCESS_UPDATE_LESSON: 'Lesson 수정에 성공하였습니다',
-    SUCCESS_DELETE_LESSON: 'Lesson 삭제에 성공하였습니다',
-    FAIL_CREATE_LESSON: 'Lesson 생성에 실패하였습니다',
-    FAIL_READ_LESSON: 'Lesson 조회에 실패하였습니다',
-    FAIL_UPDATE_LESSON: 'Lesson 수정에 실패하였습니다',
-    FAIL_DELETE_LESSON: 'Lesson 삭제에 실패하였습니다',
-    SUCCESS_READ_SESSION: 'Session 조회에 성공하였습니다',
-    SUCCESS_CREATE_SESSION: 'Session 생성에 성공하였습니다',
-    SUCCESS_UPDATE_SESSION: 'Session 수정에 성공하였습니다',
-    SUCCESS_DELETE_SESSIOn: 'Session 삭제에 성공하였습니다',
-    FAIL_CREATE_SESSION: 'Session 생성에 실패하였습니다',
-    FAIL_READ_SESSION: 'Session 조회에 실패하였습니다',
-    FAIL_UPDATE_SESSION: 'Session 수정에 실패하였습니다',
-    FAIL_DELETE_SESSION: 'Session 삭제에 실패하였습니다',
-
-    // Exbody
-    SUCCESS_CREATE_EXBODYBEFORE: 'Exbody before 생성에 성공하였습니다.',
-    SUCCESS_CREATE_EXBODYAFTER: 'Exbody after 생성에 성공하였습니다.',
-    SUCCESS_READ_EXBODY: 'Exbody 조회에 성공하였습니다.',
-    FAIL_CREATE_EXBODYBEFORE: 'Exbody before 생성에 실패하였습니다.',
-    FAIL_CREATE_EXBODYAFTER: 'Exbody after 생성에 실패하였습니다.',
-    FAIL_READ_EXBODY: 'Exbody 조회에 실패하였습니다.',
+    //Token
+    FAIL_READ_KAKAO_USER_INFO: '카카오 유저 조회에 실패했습니다',
+    SUCCESS_CREATE_TOKEN: 'Firebase 토큰 생성에 성공했습니다',
+    FAIL_CREATE_TOKEN: 'Firebase 토큰 생성에 실패했습니다',
   },
 }
