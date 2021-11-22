@@ -3,6 +3,7 @@ import axios from 'axios'
 import admin from 'firebase-admin'
 import resUtil from '../utils/resUtil.js'
 import constants from '../utils/constants.js'
+import jwt from 'jsonwebtoken'
 
 const { CODE, MSG } = constants
 
@@ -33,6 +34,16 @@ const updateOrCreateUser = (userId, email, displayName, photoURL) => {
       throw error;
     });
 }
+
+const generateToken = (uid) =>{
+  const token = jwt.sign({ uid }, process.env.TOKEN_SECRET, {
+    expiresIn: '90d',
+    issuer: 'sumsum',
+  })
+  return token
+}
+
+
 
 export default {
     createFirebaseToken: (req, res) => {
@@ -85,28 +96,32 @@ export default {
             db.collection('users').doc(userId).set(user)
               .then((response)=>{
                 console.log(`creating a custom firebase token based on uid ${userId}`)
-                admin.auth().createCustomToken(userId)
-                  .then((customToken) => {
-                    console.log(customToken)
-                    res.status(200).send(customToken);
-                  })
-                  .catch((error) => {
-                    console.log(error)
-                  })
+                const token = generateToken(userId)
+                res.status(200).send(token)
+                //admin.auth().createCustomToken(userId)
+                //  .then((customToken) => {
+                //    console.log(customToken)
+                //    res.status(200).send(customToken);
+                //  })
+                //  .catch((error) => {
+                //    console.log(error)
+                //  })
               })
               .catch((error) => {
                 console.log(error)
               })
           } else {
             console.log('Document already exists (login)')
-            admin.auth().createCustomToken(userId)
-                  .then((customToken) => {
-                    console.log(customToken)
-                    res.status(200).send(customToken);
-                  })
-                  .catch((error) => {
-                    console.log(error)
-                  })
+            const token = generateToken(userId)
+            res.status(200).send(token)
+            //admin.auth().createCustomToken(userId)
+            //      .then((customToken) => {
+            //        console.log(customToken)
+            //        res.status(200).send(customToken);
+            //      })
+            //      .catch((error) => {
+            //        console.log(error)
+            //      })
           }
         })
       })

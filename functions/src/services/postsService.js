@@ -18,7 +18,7 @@ export default {
       res.status(200).send(JSON.stringify(posts));
     },
   getPostByUid: async (req,res) => {
-    const post_uid = req.params.id
+    const {post_uid} = req.params
     console.log(req.params)
     const postRef = db.collection('posts').doc(post_uid)
     const postDoc = await postRef.get()

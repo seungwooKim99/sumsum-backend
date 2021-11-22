@@ -31,7 +31,7 @@ export default {
     const userRef = db.collection('users').doc(uid)
     const { nickname } = req.body
     
-    userRef.update({nickname, isNickNameSettingDone: true})
+    userRef.update({nickname, isNicknameSettingDone: true})
       .then((response) => {
         console.log(response)
         return resUtil.success(req,res,CODE.CREATED,MSG.SUCCESS_UPDATE_USER)
