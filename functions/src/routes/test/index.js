@@ -1,5 +1,10 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
+import constants from '../../utils/constants.js';
+import resUtil from '../../utils/resUtil.js';
+import {db} from '../../loaders/dbInit.js';
+
+const { CODE, MSG } = constants
 
 const router = express.Router()
 
@@ -45,5 +50,90 @@ router.get('/verifytoken', (req,res) => {
 });
 
 router.post('/gentoken', generateToken)
+
+router.post('/dummyusers', (req,res) => {
+  const data = req.body;
+  let xRandom = Math.random();
+  xRandom = xRandom.toFixed(1);
+  let yRandom = Math.random();
+  yRandom = yRandom.toFixed(1);
+
+  console.log(data);
+  const baseX = 126.922683; //경도
+  const baseY = 37.544133;  //위도
+  const errorX = 0.037525;
+  const errorY = 0.025673;
+  let uid = `kakao:${data.uid}`;
+  let user = {
+    uid,
+    name : data.name,
+    nickname : data.nickname,
+    email : data.email,
+    isPhoneAuthDone : true,
+    isUnivAuthDone : true,
+    isNicknameSettingDone : true,
+    isPosted : true,
+    wishLocation : data.wishLocation,
+    xLocation : baseX + xRandom*errorX,
+    yLocation : baseY + yRandom*errorY,
+  }
+
+  db.collection('users').doc(uid).set(user)
+    .then((response)=>{
+      return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_CREATE_USER, {
+        user
+      })
+    })
+    .catch((error) => {
+      return resUtil.fail(req,res,CODE.BAD_REQUEST,MSG.FAIL_CREATE_USER,error.message)
+    })
+})
+
+
+router.post('/dummyposts', async (req, res) => {
+  const uidNum = req.body.uid
+  let r = req.body;
+  const uid = `kakao:${uidNum}`;
+
+  let data = {
+    title: r.title,
+    description: r.description,
+    rentalFeeMonth: 40,
+    rentalFeeWeek: 10,
+    buildingType: "주택",
+    floors: "지상층",
+    roomType: "오픈형",
+    residentStartDate: "1638284400000",
+    residentFinishDate: "1642172400000",
+    gender: 0,
+    smoking: 1,
+    pictures: ["url1", "url2", "url3"],
+    features: [0,1,2,3,4],
+    options: [1,2,3,4,7],
+  }
+
+  data['userRef'] = db.doc(`users/${uid}`)
+  const userRef = db.collection('users').doc(uid)
+  const userDoc = await userRef.get()
+  const userData = userDoc.data()
+  console.log(userData);
+  data['name'] = userData.name
+  data['nickname'] = userData.nickname
+  const createdAtDate = new Date(2021,10,22);
+  data['createdAt'] = String(createdAtDate.getTime());
+  data['xLocation'] = userData.xLocation
+  data['yLocation'] = userData.yLocation
+  data['location'] = userData.wishLocation
+
+  db.collection('posts').doc(uid).set(data)
+    .then((response) => {
+      console.log(response)
+      return resUtil.success(req,res,CODE.CREATED,MSG.SUCCESS_CREATE_POST)
+    })
+    .catch((error) => {
+      console.log(error)
+      return resUtil.fail(req,res,CODE.BAD_REQUEST,MSG.FAIL_CREATE_POST)
+    })
+})
 
 export default router
