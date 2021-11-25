@@ -5,6 +5,7 @@ import resUtil from '../utils/resUtil.js'
 import constants from '../utils/constants.js'
 import jwt from 'jsonwebtoken'
 
+
 const { CODE, MSG } = constants
 
 
@@ -68,11 +69,12 @@ export default {
           const userId = userRecord.uid
 
           const doc = await db.collection('users').doc(userId).get()
+          let user = null;
 
           if (!doc.exists) {
             console.log('No such document! Create New User on firestore (signIn)');
             console.log(`creating a user doc on firestore based on uid ${userId}`)
-            const user = {
+            user = {
               uid : userRecord.uid,
               name : userRecord.displayName,
               nickname : null,
@@ -89,8 +91,12 @@ export default {
             db.collection('users').doc(userId).set(user)
               .then((response)=>{
                 console.log(`creating a custom firebase token based on uid ${userId}`)
+                user['photoURL'] = userRecord.photoURL
                 const token = generateToken(userId)
-                return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_CREATE_TOKEN, {token})
+                return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_CREATE_TOKEN, {
+                  token,
+                  user
+                })
               })
               .catch((error) => {
                 console.log(error)
@@ -98,8 +104,15 @@ export default {
               })
           } else {
             console.log('Document already exists (login)')
+            const userRef = db.collection('users').doc(userId)
+            const doc = await userRef.get();
+            user = doc.data();
+            user['photoURL'] = userRecord.photoURL
             const token = generateToken(userId)
-            return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_CREATE_TOKEN, {token})
+            return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_CREATE_TOKEN, {
+              token,
+              user
+            })
           }
         })
       })
@@ -140,4 +153,50 @@ export default {
       console.log(req.query['code']);
       res.send("카카오 로그인에 성공했습니다!");
     },
+    verifyToken: (req,res) => {
+      const authHeader = req.headers.authorization
+
+      // authHeader는 'Bearer <token...>'이다.
+      if (!authHeader) {
+        console.log('not logged in!!')
+        return res.status(403).json({
+          success: false,
+          statusCode: 403,
+          message: 'not logged in',
+        })
+      }
+
+      // 'Bearer', '<token...>'중 '<token...>'만 받아서 저장한다.
+      const token = authHeader.split(' ')[1]
+      jwt.verify(token, process.env.TOKEN_SECRET, async (err, decoded) => {
+        if (err) {
+          console.log('Wrong token!')
+          return res.status(403).json({
+            success: false,
+            statusCode: 403,
+            message: err.message,
+          })
+        }
+        // req.decoded에 토큰을 decode한 내용을 저장해 넘겨준다.
+        // req.decoded 내부에는 trainerid, _id, expiresIn 등 토큰에 대한 정보다 담겨있다.
+
+        const uid = decoded.uid;
+
+        const userRecord = await admin.auth().getUser(uid)
+        const userRef = db.collection('users').doc(uid)
+        const doc = await userRef.get();
+    
+        if (!doc.exists) {
+          console.log('No such user!');
+          return resUtil.fail(req,res,CODE.NOT_FOUND, MSG.FAIL_READ_USER)
+        } else {
+          let data = doc.data();
+          data['photoURL'] = userRecord.photoURL
+          return resUtil.success(req,res,CODE.OK, MSG.SUCCESS_VERIFY_TOKEN, {
+            data,
+            decoded
+          })
+        }
+      })
+    }
 }

@@ -7,14 +7,14 @@ const { CODE, MSG } = constants
 export default {
     getPosts: async (req, res) => {
       const snapshot = await db.collection('posts').get();
-      const posts = [];
+      let postsData = [];
+      let data = {};
       snapshot.forEach((doc) => {
-        const id = doc.id;
-        const data = doc.data();
-        posts.push({id, ...data});
+        //const id = doc.id;
+        data = doc.data();
+        postsData.push(data);
       });
-    
-      return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_READ_POST,posts)
+      return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_READ_POST,postsData)
     },
   getPostByUid: async (req,res) => {
     const {post_uid} = req.params
@@ -46,6 +46,13 @@ export default {
       const uid = req.decoded.uid
       let data = req.body;
       data['userRef'] = db.doc(`users/${uid}`)
+      const userRef = db.collection('users').doc(uid)
+      const userDoc = await userRef.get()
+      const userData = userDoc.data()
+      data['name'] = userData.name
+      data['nickname'] = userData.nickname
+      const createdAtDate = new Date(2021,10,22);
+      data['createdAt'] = String(createdAtDate.getTime());
 
       db.collection('posts').doc(uid).set(data)
         .then((response) => {

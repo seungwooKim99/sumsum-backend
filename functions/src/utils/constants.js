@@ -73,5 +73,7 @@ export default {
     FAIL_READ_KAKAO_USER_INFO: '카카오 유저 조회에 실패했습니다',
     SUCCESS_CREATE_TOKEN: 'Firebase 토큰 생성에 성공했습니다',
     FAIL_CREATE_TOKEN: 'Firebase 토큰 생성에 실패했습니다',
+    SUCCESS_VERIFY_TOKEN: 'Firebase 토큰 검증에 성공했습니다',
+    FAIL_VERIFY_TOKEN: 'Firebase 토큰 검증에 실패했습니다',
   },
 }
