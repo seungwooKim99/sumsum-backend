@@ -6,7 +6,7 @@ import admin from 'firebase-admin'
 const { CODE, MSG } = constants
 
 export default {
-  getUsers: async (req, res) => {
+  getUser: async (req, res) => {
     const uid = req.decoded.uid
     try{
       const userRecord = await admin.auth().getUser(uid)
@@ -19,7 +19,29 @@ export default {
       } else {
         let data = doc.data();
         data['photoURL'] = userRecord.photoURL
-        return resUtil.success(req,res,CODE.OK, MSG.SUCCESS_READ_USER, data)
+
+        // 컨택한 게시글 정보도 추가하기
+        let posts = [];
+        if(data.posts.length != 0){
+          let postArr = data.posts;
+
+          for (let postId of postArr) {
+            let postData = {};
+            let postRef = db.collection('posts').doc(postId)
+            let doc = await postRef.get();
+            let post = doc.data();
+            postData["id"] = postId;
+            postData["title"] = post.title;
+            postData["name"] = post.name;
+            postData["nickname"] = post.nickname;
+            posts.push(postData);
+          }
+          data['posts'] = posts;
+          return resUtil.success(req,res,CODE.OK, MSG.SUCCESS_READ_USER, data)
+        }
+        else{
+          return resUtil.success(req,res,CODE.OK, MSG.SUCCESS_READ_USER, data)
+        }
       }
     }
     catch (error) {
@@ -74,4 +96,35 @@ export default {
         return resUtil.fail(req,res,CODE.NOT_FOUND,MSG.FAIL_UPDATE_USER)
       })
   },
+  makeContact: async (req,res) => {
+    const uid = req.decoded.uid
+    const userRef = db.collection('users').doc(uid)
+    const { post } = req.body
+
+    const doc = await userRef.get();
+    let data = doc.data();
+
+    let posts = data.posts || [];
+    let pushFlag = true;
+    posts.forEach((data) => {
+      if(data == post){
+        pushFlag = false;
+      }
+    })
+    if (pushFlag){
+      posts.push(post);
+    }
+    
+    userRef.update({
+      posts,
+    })
+      .then((response) => {
+        console.log(response)
+        return resUtil.success(req,res,CODE.CREATED,MSG.SUCCESS_UPDATE_USER)
+      })
+      .catch((error) => {
+        console.log(error)
+        return resUtil.fail(req,res,CODE.NOT_FOUND,MSG.FAIL_UPDATE_USER)
+      })
+  }
 }

@@ -86,6 +86,7 @@ export default {
               wishLocation : null,
               xLocation : null,
               yLocation : null,
+              posts: [],
             }
           
             db.collection('users').doc(userId).set(user)

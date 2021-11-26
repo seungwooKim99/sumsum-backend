@@ -98,12 +98,16 @@ export default {
       let data = req.body;
       data['userRef'] = db.doc(`users/${uid}`)
       const userRef = db.collection('users').doc(uid)
+
+      await userRef.update({isPosted: true})
+
       const userDoc = await userRef.get()
       const userData = userDoc.data()
       data['name'] = userData.name
       data['nickname'] = userData.nickname
       const createdAtDate = new Date(2021,10,22);
       data['createdAt'] = String(createdAtDate.getTime());
+      data['isDealt'] = false;
 
       db.collection('posts').doc(uid).set(data)
         .then((response) => {
@@ -113,6 +117,17 @@ export default {
         .catch((error) => {
           console.log(error)
           return resUtil.fail(req,res,CODE.BAD_REQUEST,MSG.FAIL_CREATE_POST)
+        })
+    },
+    setIsDealtDone: (req, res) => {
+      const uid = req.decoded.uid
+      db.collection('posts').doc(uid).update({isDealt: true})
+        .then((response) => {
+          return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_UPDATE_POST)
+        })
+        .catch((error) => {
+          console.log(error)
+          return resUtil.fail(req,res,CODE.BAD_REQUEST,MSG.FAIL_UPDATE_POST, error.message)
         })
     }
 }
