@@ -7,6 +7,7 @@ const router = express.Router()
 router.get('/', postsService.getPosts);
 router.get('/:post_uid', postsService.getPostByUid);
 router.post('/', verifyTokenMiddleware, postsService.createPost);
-//router.post('/filter', postsService.createPost);
+router.post('/distance', postsService.getPostsByDistance);
+router.post('/created', postsService.getPostsByCreated);
 
 export default router

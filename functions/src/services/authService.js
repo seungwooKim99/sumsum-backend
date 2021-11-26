@@ -49,7 +49,7 @@ const generateToken = (uid) =>{
 export default {
     createFirebaseToken: (req, res) => {
       const kakaoaccesstoken = req.headers['authorization']
-
+      console.log(kakaoaccesstoken);
       console.log('Requesting user profile from Kakao API server.')
       axios.get('https://kapi.kakao.com/v2/user/me?secure_resource=true',{
         headers: {Authorization: 'Bearer ' + kakaoaccesstoken},
