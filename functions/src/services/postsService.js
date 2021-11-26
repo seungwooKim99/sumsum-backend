@@ -105,7 +105,7 @@ export default {
       const userData = userDoc.data()
       data['name'] = userData.name
       data['nickname'] = userData.nickname
-      const createdAtDate = new Date(2021,10,22);
+      const createdAtDate = new Date();
       data['createdAt'] = String(createdAtDate.getTime());
       data['isDealt'] = false;
 
