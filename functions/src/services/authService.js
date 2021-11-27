@@ -152,7 +152,19 @@ export default {
     },
     kakaoOauth: (req,res) => {
       console.log(req.query['code']);
-      res.send("카카오 로그인에 성공했습니다!");
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>practice</title>
+        </head>
+        <body height=100%; style="justify-content:center;align-items:center;display:flex;flex-direction:column;">
+            <h1 style="text-align:center;">카카오 계정 로그인 중입니다</h1>
+        </body>
+        </html>
+        `;
+      res.send(html);
     },
     verifyToken: (req,res) => {
       const authHeader = req.headers.authorization

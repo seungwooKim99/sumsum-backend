@@ -67,7 +67,8 @@ export default {
       return resUtil.success(req,res,CODE.OK,MSG.SUCCESS_READ_POST,sortedPosts)
     },
     getPostByUid: async (req,res) => {
-      const {post_uid} = req.params
+      //const {post_uid} = req.params
+      const {xLocation, yLocation,post_uid } = req.body;
       console.log(req.params)
       const postRef = db.collection('posts').doc(post_uid)
       const postDoc = await postRef.get()
@@ -78,24 +79,18 @@ export default {
       } else {
         let data = postDoc.data();
         data['id'] = post_uid;
-        const userDoc = await data.userRef.get()
-        if (!userDoc.exists){
-          console.log("No such user!")
-          return resUtil.fail(req,res,CODE.NOT_FOUND, MSG.FAIL_READ_USER)
-        }
-        else {
-          const userData = userDoc.data()
-          console.log(userData)
-          data['name'] = userData.name
-          data['nickname'] = userData.nickname
-          return resUtil.success(req,res,CODE.OK, MSG.SUCCESS_READ_POST, data)
-        }
+        let distance = getDistance(data.xLocation, data.yLocation, xLocation, yLocation);
+        distance = distance * 1000;
+        distance = distance.toFixed(0);
+        data["distance"] = distance;
+        return resUtil.success(req,res,CODE.OK, MSG.SUCCESS_READ_POST, data)
       }
     }
     ,
     createPost: async (req, res) => {
       const uid = req.decoded.uid
       let data = req.body;
+      data['id'] = uid;
       data['userRef'] = db.doc(`users/${uid}`)
       const userRef = db.collection('users').doc(uid)
 

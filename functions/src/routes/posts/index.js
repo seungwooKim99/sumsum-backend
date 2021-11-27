@@ -5,7 +5,7 @@ import postsService from '../../services/postsService.js'
 const router = express.Router()
 
 router.get('/', postsService.getPosts);
-router.get('/:post_uid', postsService.getPostByUid);
+router.post('/postid', postsService.getPostByUid);
 router.post('/', verifyTokenMiddleware, postsService.createPost);
 router.patch('/dealt', verifyTokenMiddleware, postsService.setIsDealtDone);
 router.post('/distance', postsService.getPostsByDistance);
